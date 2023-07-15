@@ -100,6 +100,7 @@ sudo ufw allow from 172.16.0.0
 
 ```
 [Official Ubuntu ufw manual](https://manpages.ubuntu.com/manpages/jammy/en/man8/ufw.8.html)
+[Digital Ocean Tutorial on Firewall Setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-22-04)
 
 
 ### Control plane
