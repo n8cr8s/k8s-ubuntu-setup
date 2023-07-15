@@ -105,6 +105,7 @@ sudo ufw allow from 172.16.0.0
 ### Control plane
 
 | Protocol | Direction | Port Range | Purpose | Used By |
+| --- | --- | --- | --- | --- |
 | TCP | Inbound | 6443 | Kubernetes API server | All |
 | TCP | Inbound | 2379-2380 | etcd server client API | kube-apiserver, etcd |
 | TCP | Inbound | 10250 | Kubelet API | Self, Control plane | 
@@ -116,7 +117,8 @@ sudo ufw allow from 172.16.0.0
 
 ### Worker node(s)
 
- | Protocol | Direction | Port Range | Purpose	Used By | 
+ | Protocol | Direction | Port Range | Purpose | Used By |
+ | --- | --- | --- | --- | --- |
  | TCP | Inbound | 10250 | Kubelet API | Self, Control plane | 
  | TCP | Inbound | 30000-32767 | NodePort Services† | All | 
 
