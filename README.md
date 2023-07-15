@@ -1,5 +1,11 @@
 # K8s on Ubuntu 22.04
 
+Stack Setup:
+- Ubuntu 22.04 Server
+- Kubeadm for K8s setup
+- Calico for CNI
+- CRI-O for Container Runtime
+
 ## Steps to set up K8s on Ubuntu Server 22.04
 
 - Get ISO for Ubuntu Server 22.04 or Desktop 
@@ -7,6 +13,7 @@
 ```
 sudo install apt ubuntu-server -y
 ```
+- Update Host file to contain IP Addresses for all machines in cluster and set each machines hostname.
 
 ## Install CRIO-O
 
