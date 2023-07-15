@@ -6,7 +6,7 @@ Stack Setup:
 - Calico for CNI
 - CRI-O for Container Runtime
 
-## Steps to set up K8s on Ubuntu Server 22.04
+## Steps to set up Ubuntu Server 22.04
 
 - Get ISO for Ubuntu Server 22.04 or Desktop 
 - If you get the desktop you will need to run the following command:
@@ -91,6 +91,16 @@ crictl
 ```
 
 ## Open Ports and turn off swap
+
+I recommend turning on the firewall with the following command and add all computers to the allowed list.
+
+```
+sudo ufw enable
+sudo ufw allow from 172.16.0.0
+
+```
+[Official Ubuntu ufw manual](https://manpages.ubuntu.com/manpages/jammy/en/man8/ufw.8.html)
+
 
 ### Control plane
 Protocol	Direction	Port Range	Purpose	Used By
