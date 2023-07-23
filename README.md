@@ -12,6 +12,9 @@ Stack Setup:
 - If you get the desktop you will need to run the following command:
 ```
 sudo install apt ubuntu-server -y
+
+sudo install apt openssh-server -y 
+
 ```
 - Update Host file to contain IP Addresses for all machines in cluster and set each machines hostname.
 
