@@ -11,9 +11,9 @@ Stack Setup:
 - Get ISO for Ubuntu Server 22.04 or Desktop 
 - If you get the desktop you will need to run the following command:
 ```
-sudo install apt ubuntu-server -y
+sudo apt install ubuntu-server -y
 
-sudo install apt openssh-server -y 
+sudo apt install openssh-server -y 
 
 ```
 - Update Host file to contain IP Addresses for all machines in cluster and set each machines hostname.
