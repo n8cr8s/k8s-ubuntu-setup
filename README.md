@@ -130,9 +130,9 @@ sudo ufw allow from 172.16.0.0
 ## Turn off swap
 
 ```
-swapoff -a
+sudo swapoff -a
 
-vi /etc/fstab
+sudo vi /etc/fstab
 ```
 
 - Update the line referring to swap by commenting it out with a pound sign.  It is usually the last line.
