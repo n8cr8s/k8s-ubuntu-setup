@@ -56,11 +56,19 @@ Press th Esc key
 In the console, source the cri-o runtime to download necessary libraries
 
 ```
+# Old Way
 echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /"| sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$CRIO_VERSION/$OS/ /"|sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.list
 
 curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION/$OS/Release.key | sudo apt-key add -
 curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key add -
+
+# New Way
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:cri-o:$CRIO_VERSION/$OS/Release.key | gpg --dearmor -o /usr/share/keyrings/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.gpg
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | gpg --dearmor -o /usr/share/keyrings/devel:kubic:libcontainers:stable.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/devel:kubic:libcontainers:stable.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+echo "deb [signed-by=/usr/share/keyrings/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.gpg] http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$CRIO_VERSION/$OS/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.list
 
 sudo apt update
 
