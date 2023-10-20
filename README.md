@@ -24,7 +24,7 @@ ssh-keygen
 
 ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
 
-# ssh -i </path/to/private_key> <user>@<host-ip-address> to login
+# cmd to login: ssh -i </path/to/private_key> <user>@<host-ip-address>
 
 ```
 - Copy private key to deployment server for k8s nodes as well if needed.
