@@ -17,6 +17,14 @@ sudo apt install openssh-server -y
 
 ```
 - Update Host file to contain IP Addresses for all machines in cluster and set each machines hostname.
+- Generate ssh-key to ssh in from host to login to each server without using password; I recommend naming the file something other than id_rsa
+- Note: ssh -i </path/to/private_key> <user>@<ip-address> to login
+```
+ssh-keygen
+
+ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
+```
+- Copy private key to deployment server for k8s nodes as well if needed.
 
 ## Install CRIO-O
 
