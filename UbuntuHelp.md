@@ -13,3 +13,11 @@ apt list --installed
 ```
 
 Note: Lines with "all", in the command above are root packages.  Lines with "armhf" are dependencies.
+
+
+## List Ports
+
+```
+sudo netstat -tulpn 
+
+```
