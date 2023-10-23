@@ -19,5 +19,10 @@ Note: Lines with "all", in the command above are root packages.  Lines with "arm
 
 ```
 sudo netstat -tulpn 
+```
 
+## List Firewall Ports
+
+```
+sudo iptables -L
 ```
