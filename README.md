@@ -29,7 +29,7 @@ ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
 ```
 - Copy private key to deployment server for k8s nodes as well if needed.
 
-## Install CRIO-O
+## Install CRI-O
 
 ```
 sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
