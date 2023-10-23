@@ -77,7 +77,7 @@ sudo apt install containernetworking-plugins -y
 Add the configuration file for crio
 ```
 sudo nano /etc/crio/crio.conf
-- update the following lines in the file, uncomment and update.
+- update the following lines in the file, uncomment and update. Around line 500.
 --network_dir = "/etc/cni/net.d"
 --plugin_dirs = [ "/opt/cni/bin", "/usr/lib/cni",]
 ```
