@@ -69,8 +69,6 @@ sudo apt install cri-o cri-o-runc -y
 sudo systemctl start crio
 sudo systemctl enable crio
 
-sudo systemctl status crio
-
 sudo apt install containernetworking-plugins -y
 ```
 
@@ -94,13 +92,19 @@ sudo crictl --runtime-endpoint unix:///var/run/crio/crio.sock version
 sudo crictl info
 
 sudo su -
+```
 
+After logging in as root
+```
 crictl completion > /etc/bash_completion.d/crictl
 
 source ~/.bashrc
 
 exit
+```
 
+Return to cli as regular user
+```
 crictl
 ```
 
