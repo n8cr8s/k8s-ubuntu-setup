@@ -97,14 +97,14 @@ sudo su -
 After logging in as root
 ```
 crictl completion > /etc/bash_completion.d/crictl
-
+```
+```
 source ~/.bashrc
-
-exit
 ```
 
 Return to cli as regular user
 ```
+exit
 crictl
 ```
 
