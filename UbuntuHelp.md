@@ -38,3 +38,14 @@ PasswordAuthentication no
 # Update PermitRootLogin
 PermitRootLogin no
 ```
+
+## Privilege Escalation
+Add line to allow commands and disallow group commands
+```
+vi /etc/sudoers
+```
+
+## Logs user esclation
+```
+cat /var/log/auth.log | grep <username> | tail
+```
