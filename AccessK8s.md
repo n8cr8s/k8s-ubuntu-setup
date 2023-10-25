@@ -122,3 +122,9 @@ roleRef:
   name: view
   apiGroup: rbac.authorization.k8s.io
 ```
+
+### Test RoleBinding for User
+```
+# verb/resource element is one item within array of verbs for rule above.
+kubectl auth can-i <verb> <resource> --as=<username> 
+```
