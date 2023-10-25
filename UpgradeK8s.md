@@ -30,7 +30,7 @@ sudo kubeadm upgrade apply v1.xx.x
 - First update the other control plane nodes
 - Second update the worker nodes
 - Every node in cluster must be updated
-- Additional Control Plane nodes can be updated in parallel after the primary node is updated.
+- Additional Control Plane nodes can be updated one at a time after the primary node is updated.
 - Worker nodes can be done in parallel with each other.
 
 From the node
