@@ -26,7 +26,10 @@ kubeadm upgrade plan
 sudo kubeadm upgrade apply v1.xx.x
 ```
 
-## Additional Control Plane Nodes
+## Additional Control Plane Nodes and Worker Nodes
+- First update the other control plane nodes
+- Second update the worker nodes
+
 From the node
 ```
 sudo kubeadm upgrade node
