@@ -93,6 +93,9 @@ rules:
 
 ### Bind Role to Cluster
 Craete file and kubectl apply -f <filename>
+- use ClusterRoleBinding without a metadata:namespace field.
+- In order to update a Rolebinding; Delete the rolebinding First and then recreate.
+-- Cannot be updated via apply
 ```
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
