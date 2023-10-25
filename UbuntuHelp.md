@@ -26,3 +26,15 @@ sudo netstat -tulpn
 ```
 sudo iptables -L
 ```
+
+## SSH Service
+
+Remove Root access from ssh and prevent password based login
+
+```
+sudo vi /etc/ssh/sshd_config
+# Update Password Login
+PasswordAuthentication no
+# Update PermitRootLogin
+PermitRootLogin no
+```
