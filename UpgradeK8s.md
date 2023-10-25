@@ -26,7 +26,6 @@ kubeadm upgrade plan
 sudo kubeadm upgrade apply v1.xx.x
 ```
 
-
 ## Additional Control Plane Nodes
 From the node
 ```
@@ -37,3 +36,30 @@ From primary control plane
 ```
 kubectl drain <node> --ignore-daemonset
 ```
+
+### RHEL/CentOs
+```
+yum install -y kubelet-1.xx.x-0 kubectl-1.xx.x-0  --disableexcludes=kubernetes
+```
+
+### Ubuntu/Debian
+```
+# Replace xx.x with version, example, 1.22.0-00
+apt-mark unhold kubelet kubectl && \
+apt-get update && apt-get install -y \
+kubelet=1.xx.x-00 kubectl=1.xx.x-00 && \
+apt-mark hold kubelet kubectl
+```
+
+### System Daemon Reload and Restart Kubelet
+From node
+```
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+From Primary Node
+```
+kubectl uncordon <node>
+```
+
+
