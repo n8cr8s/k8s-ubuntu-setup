@@ -28,7 +28,7 @@ ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
 ```
 
 ```
-# Alternate way
+# Alternate way by logging into server and then copying the file to it.
 
 mkdir -p /home/user_name/.ssh && touch /home/user_name/.ssh/authorized_keys
 
