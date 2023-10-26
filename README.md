@@ -35,6 +35,11 @@ mkdir -p /home/user_name/.ssh && touch /home/user_name/.ssh/authorized_keys
 # Put pub key contents in authorized_keys
 vi /home/user_name/.ssh/authorized_keys
 
+# Create file to prevent having to answer "yes" to ssh question about host authorization
+cat <<EOF | sudo tee /home/<username>/.ssh/config
+StrictHostKeyChecking accept-new
+EOF
+
 # Update Permissions
 chmod 700 /home/user_name/.ssh && chmod 600 /home/user_name/.ssh/authorized_keys
 
