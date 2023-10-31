@@ -13,10 +13,27 @@ Stack Setup:
 ```
 sudo apt install ubuntu-server -y
 
-sudo apt install openssh-server -y 
-
+sudo apt install openssh-server -y
 ```
+For Workers:
+```
+# Create user on workers(Only)
+sudo visudo -f /etc/sudoers.d/<username>
+```
+Add the following line to allow access to add to cluster via kubeadm without a password when using a key file.
+```
+<username> ALL=NOPASSWD:/usr/bin/kubeadm
+```
+Ctrl+X to exit, Y for save; validate format
+```
+sudo visudo -c
+```
+
 - Update Host file to contain IP Addresses for all machines in cluster and set each machines hostname.
+```
+sudo vi /etc/hosts
+```
+
 - Generate ssh-key to ssh in from host to login to each server without using password; I recommend naming the file something other than id_rsa
 
 ```
@@ -26,6 +43,11 @@ ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
 
 # cmd to login: ssh -i </path/to/private_key> <user>@<host-ip-address>
 ```
+Open ssh_config and remove password access; uncomment and change answer to no
+```
+PasswordAuthentication no
+```
+
 
 ```
 # Alternate way by logging into server and then copying the file to it.
