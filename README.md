@@ -15,9 +15,8 @@ sudo apt install ubuntu-server -y
 
 sudo apt install openssh-server -y
 ```
-For Workers:
+Update the sudoers file in Workers Only; create a new file for permissions don't edit the original.
 ```
-# Create user on workers(Only)
 sudo visudo -f /etc/sudoers.d/<username>
 ```
 Add the following line to allow access to add to cluster via kubeadm without a password when using a key file.
