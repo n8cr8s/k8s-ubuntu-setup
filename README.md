@@ -48,7 +48,7 @@ sudo vi /etc/ssh/ssh_config
 
 PasswordAuthentication no
 ```
-:wq to Quit and Save
+Escape and then :wq to Quit and Save
 Reload ssh
 
 ```
