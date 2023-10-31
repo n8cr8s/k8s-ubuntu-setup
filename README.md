@@ -44,9 +44,16 @@ ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
 ```
 Open ssh_config and remove password access; uncomment and change answer to no
 ```
+sudo vi /etc/ssh/ssh_config
+
 PasswordAuthentication no
 ```
+:wq to Quit and Save
+Reload ssh
 
+```
+sudo service ssh reload-force
+```
 
 ```
 # Alternate way by logging into server and then copying the file to it.
