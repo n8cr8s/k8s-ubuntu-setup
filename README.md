@@ -274,9 +274,9 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 Deploy Network Operator and resources
 ```
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.4/manifests/tigera-operator.yaml
 
-curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.4/manifests/custom-resources.yaml -O
 ```
 
 ### Update CIDR to match pod-network-cidr value above from starting cluster
