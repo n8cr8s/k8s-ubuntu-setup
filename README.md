@@ -3,7 +3,7 @@
 Stack Setup:
 - Ubuntu 22.04 Server
 - Kubeadm for K8s setup
-- Calico for CNI
+- Cilium for CNI
 - CRI-O for Container Runtime
 
 ## Steps to set up Ubuntu Server 22.04
