@@ -270,25 +270,51 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ```
 
-## Install CNI (Calico)
+## Install CNI (Cilium)
 
-Deploy Network Operator and resources
+Install Linux Client
 ```
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.4/manifests/tigera-operator.yaml
-
-curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.4/manifests/custom-resources.yaml -O
-```
-
-### Update CIDR to match pod-network-cidr value above from starting cluster
-```
-
-kubectl create -f custom-resources.yaml
-
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 ```
 
+Install Mac Client
+```
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "arm64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-darwin-${CLI_ARCH}.tar.gz{,.sha256sum}
+shasum -a 256 -c cilium-darwin-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-darwin-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-darwin-${CLI_ARCH}.tar.gz{,.sha256sum}
+```
 
+Validate Version
+```
+cilium version --client
+```
 
+Install Cilium
+```
+cilium install --version 1.14.4
+```
 
+Validate Install Status
+```
+cilium status --wait
+```
+
+Test Connectivity
+```
+cilium connectivity test
+```
+
+Update Firewall with IP for Cilium Cluster
 
 ## Get Join token for workers
 
