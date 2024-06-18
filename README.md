@@ -35,16 +35,33 @@ sudo vi /etc/hosts
 
 - Generate ssh-key to ssh in from host to login to each server without using password; I recommend naming the file something other than id_rsa
 
+Version One
+
+On the new node, open sshd_config and remove password access; uncomment and change answer to yes to add new key to node
 ```
+sudo vi /etc/ssh/sshd_config
+
+PasswordAuthentication yes
+```
+Escape and then :wq to Quit and Save
+Reload ssh  
+```
+sudo service ssh reload-force
+```
+Also get the ip address via ifconfig on the new node.  You will  need to install it.
+
+On the Control Plane Node
+```
+# If you don't have one to use, generate a key, otherwise skip this step.
 ssh-keygen
 
 ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
 
 # cmd to login: ssh -i </path/to/private_key> <user>@<host-ip-address>
 ```
-Open ssh_config and remove password access; uncomment and change answer to no
+Open sshd_config and remove password access; uncomment and change answer to no
 ```
-sudo vi /etc/ssh/ssh_config
+sudo vi /etc/ssh/sshd_config
 
 PasswordAuthentication no
 ```
@@ -54,7 +71,7 @@ Reload ssh
 ```
 sudo service ssh reload-force
 ```
-
+Version 2
 ```
 # Alternate way by logging into server and then copying the file to it.
 
