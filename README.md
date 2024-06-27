@@ -4,7 +4,7 @@ Stack Setup:
 - Ubuntu 22.04 Server
 - Kubeadm for K8s setup
 - Cilium for CNI
-- CRI-O for Container Runtime
+- Containerd for Container Runtime
 
 ## Steps to set up Ubuntu Server 22.04
 
@@ -15,14 +15,17 @@ sudo apt install ubuntu-server -y
 
 sudo apt install openssh-server -y
 ```
+
 Update the sudoers file in Workers Only; create a new file for permissions don't edit the original.
 ```
 sudo visudo -f /etc/sudoers.d/<username>
 ```
+
 Add the following line to allow access to add to cluster via kubeadm without a password when using a key file.
 ```
 <username> ALL=NOPASSWD:/usr/bin/kubeadm
 ```
+
 Ctrl+X to exit, Y for save; validate format
 ```
 sudo visudo -c
@@ -92,83 +95,22 @@ chown -R username:username /home/username/.ssh
 ```
 - Copy private key to deployment server for k8s nodes as well if needed.
 
-## Install CRI-O
+## Install and update needed libraries
 
 ```
-sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
-
-export OS=xUbuntu_22.04
-export CRIO_VERSION=1.26
-
-vi .bashrc or .zshrc 
-```
-
-Add the following lines to the bottom of the file
-
-```
-export OS=xUbuntu_22.04
-export CRIO_VERSION=1.26
-```
-
-Press th Esc key
-
-```
-:wq
-```
-
-In the console, source the cri-o runtime to download necessary libraries
-
-```
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /"| sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$CRIO_VERSION/$OS/ /"| sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.list
-
-curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$CRI_VERSION/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
-
 sudo apt update
 
-sudo apt install cri-o cri-o-runc -y
+sudo apt -y full-upgrade
 
-sudo systemctl start crio
-sudo systemctl enable crio
+sudo apt install apt-transport-https ca-certificates curl gpg gnupg2 software-properties-common -y
 
-sudo apt install containernetworking-plugins -y
 ```
 
-Add the configuration file for crio
+### Enable time-sync with NTP server
 ```
-sudo nano /etc/crio/crio.conf
-- update the following lines in the file, uncomment and update. Around line 500.
---network_dir = "/etc/cni/net.d"
---plugin_dirs = [ "/opt/cni/bin", "/usr/lib/cni",]
-```
+sudo apt install systemd-timesyncd
 
-
-Update Service and download remaining tools for cri-o
-```
-sudo systemctl restart crio
-
-sudo apt install -y cri-tools
-
-sudo crictl --runtime-endpoint unix:///var/run/crio/crio.sock version
-
-sudo crictl info
-
-sudo su -
-```
-
-After logging in as root
-```
-crictl completion > /etc/bash_completion.d/crictl
-```
-```
-source ~/.bashrc
-```
-
-Return to cli as regular user
-```
-exit
-crictl
+sudo timedatectl set-ntp true
 ```
 
 ## Open Ports and turn off swap
@@ -268,19 +210,105 @@ sudo apt-mark hold kubeadm kubelet kubectl
 
 FYI the service kubelet will keep erroring out until you either initialize the cluster and install the CNI or add it to the cluster.
 
+## Install Containerd
+- Add containerd repository key and add the repository to source list
+```
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable"
+
+
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+- Install containerd
+```
+
+sudo apt update
+sudo apt install -y containerd.io
+
+```
+
+- Configure containerd / CP-W
+
+Create a directory to store containerd config file in /etc/
+```
+sudo mkdir -p /etc/containerd
+```
+Generate the default config toml file
+```
+sudo containerd config default|sudo tee /etc/containerd/config.toml
+```
+
+Open the generated file in any text editor and verify whether the following settings are present. If not, you should set them as shown below
+```
+disabled_plugins = []
+
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+  runtime_type = "io.containerd.runc.v2"  # <- note this, this line might have been missed
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+  SystemdCgroup = true # <- note this, this could be set as false in the default configuration, please make it true
+
+```
+Restart services
+```
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+systemctl status containerd
+```
+
+- Setup crictl for inspecting containers / CP-W
+
+First run the below command and check the output
+```
+ sudo crictl ps
+```
+If the crictl is not present, install it using the below command
+```
+sudo apt install cri-tools
+```
+Once the installation is completed, re-run the sudo crictl ps command. You may encounter output with errors and warnings. To address these issues, we need to add configurations for crictl. Additionally, you can customize the debug output using this config file
+
+Create crictl.yaml file in /etc/
+```
+sudo vim /etc/crictl.yaml
+```
+Paste below content, save and exit
+```
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 2
+debug: true # <- if you don't want to see debug info you can set this to false
+pull-image-on-create: false
+```
+Run the sudo crictl ps again,and you shouldn’t encounter any errors or warnings
+
 
 ## If Necessary:
 - Configuring a cgroup driver
 - Both the container runtime and the kubelet have a property called "cgroup driver", which is important for the management of cgroups on Linux machines.
 
+## Start Kubelet service
+```
+sudo systemctl enable kubelet
+```
 
 ## Only do on the control plane.
 
 Start Up Control Plane
 
 ```
-sudo kubeadm config images pull
-sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+sudo critcl images
+
+sudo kubeadm config images pull --cri-socket unix:///var/run/containerd/containerd.sock
+
+sudo critcl images
+
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --cri-socket unix:///var/run/containerd/containerd.sock --v=5
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
