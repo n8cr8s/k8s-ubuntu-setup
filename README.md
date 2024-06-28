@@ -117,7 +117,7 @@ FYI the service kubelet will keep erroring out until you either initialize the c
 Download most recent version
 ```
 wget https://github.com/containerd/containerd/releases/download/v1.6.8/containerd-1.6.8-linux-amd64.tar.gz
-tar Cxzvf /usr/local containerd-1.6.8-linux-amd64.tar.gz
+sudo tar Cxzvf /usr/local containerd-1.6.8-linux-amd64.tar.gz
 ```
 
 Get most recent  version of runc
@@ -131,7 +131,7 @@ Get CNI-Plugins most recent version extract and place
 wget https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz
 
 mkdir -p /opt/cni/bin
-tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.1.1.tgz
+sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.1.1.tgz
 ```
 
 Create containerd dir and deploy
@@ -156,15 +156,6 @@ sudo systemctl enable containerd
 ```
 
 - Setup crictl for inspecting containers 
-
-First run the below command and check the output
-```
- sudo crictl ps
-```
-If the crictl is not present, install it using the below command
-```
-sudo apt install cri-tools
-```
 Once the installation is completed, re-run the sudo crictl ps command. You may encounter output with errors and warnings. To address these issues, we need to add configurations for crictl. Additionally, you can customize the debug output using this config file
 
 Create crictl.yaml file in /etc/
@@ -180,7 +171,10 @@ debug: true # <- if you don't want to see debug info you can set this to false
 pull-image-on-create: false
 ```
 Run the sudo crictl ps again,and you shouldn’t encounter any errors or warnings
-
+```
+sudo sysctl --system
+sudo crictl ps
+```
 
 ## If Necessary:
 - Configuring a cgroup driver
@@ -188,6 +182,7 @@ Run the sudo crictl ps again,and you shouldn’t encounter any errors or warning
 
 ## Start Kubelet service
 ```
+sudo systemctl start kubelet
 sudo systemctl enable kubelet
 ```
 
@@ -262,6 +257,20 @@ Update Firewall with IP for Cilium Cluster
 
 kubeadm token create --print-join-command
 
+```
+
+## On worker node
+Paste join command
+
+```
+# Substitute in values controller-plane-node-id, token.00000 and sha256:01234567890 with values from command above, 
+# or just paste the output from the command with sudo in front of it
+
+sudo kubeadm join controller-plane-node-ip:6443 --token token.000000 --discovery-token-ca-cert-hash sha256:01234567890
+
+# Create directory for local-storage
+sudo mkdir /mnt/data
+sudo chmod -R 755 /mnt/data
 ```
 
 # Locking down the system
