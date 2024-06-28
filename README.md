@@ -31,70 +31,6 @@ Ctrl+X to exit, Y for save; validate format
 sudo visudo -c
 ```
 
-- Update Host file to contain IP Addresses for all machines in cluster and set each machines hostname.
-```
-sudo vi /etc/hosts
-```
-
-- Generate ssh-key to ssh in from host to login to each server without using password; I recommend naming the file something other than id_rsa
-
-Version One
-
-On the new node, open sshd_config and remove password access; uncomment and change answer to yes to add new key to node
-```
-sudo vi /etc/ssh/sshd_config
-
-PasswordAuthentication yes
-```
-Escape and then :wq to Quit and Save
-Reload ssh  
-```
-sudo service ssh reload-force
-```
-Also get the ip address via ifconfig on the new node.  You will  need to install it.
-
-On the Control Plane Node
-```
-# If you don't have one to use, generate a key, otherwise skip this step.
-ssh-keygen
-
-ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
-
-# cmd to login: ssh -i </path/to/private_key> <user>@<host-ip-address>
-```
-Open sshd_config and remove password access; uncomment and change answer to no
-```
-sudo vi /etc/ssh/sshd_config
-
-PasswordAuthentication no
-```
-Escape and then :wq to Quit and Save
-Reload ssh
-
-```
-sudo service ssh reload-force
-```
-Version 2
-```
-# Alternate way by logging into server and then copying the file to it.
-
-mkdir -p /home/user_name/.ssh && touch /home/user_name/.ssh/authorized_keys
-
-# Put pub key contents in authorized_keys
-vi /home/user_name/.ssh/authorized_keys
-
-# Create file to prevent having to answer "yes" to ssh question about host authorization
-cat <<EOF | sudo tee /home/<username>/.ssh/config
-StrictHostKeyChecking accept-new
-EOF
-
-# Update Permissions
-chmod 700 /home/user_name/.ssh && chmod 600 /home/user_name/.ssh/authorized_keys
-
-chown -R username:username /home/username/.ssh
-```
-- Copy private key to deployment server for k8s nodes as well if needed.
-
 ## Install and update needed libraries
 
 ```
@@ -112,39 +48,6 @@ sudo apt install systemd-timesyncd
 
 sudo timedatectl set-ntp true
 ```
-
-## Open Ports and turn off swap
-
-I recommend turning on the firewall with the following command and add all computers to the allowed list.
-
-```
-sudo ufw enable
-sudo ufw allow from 172.16.0.0
-
-```
-[Official Ubuntu ufw manual](https://manpages.ubuntu.com/manpages/jammy/en/man8/ufw.8.html)
-[Digital Ocean Tutorial on Firewall Setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-22-04)
-
-
-### Control plane
-
-| Protocol | Direction | Port Range | Purpose | Used By |
-| --- | --- | --- | --- | --- |
-| TCP | Inbound | 6443 | Kubernetes API server | All |
-| TCP | Inbound | 2379-2380 | etcd server client API | kube-apiserver, etcd |
-| TCP | Inbound | 10250 | Kubelet API | Self, Control plane | 
-| TCP | Inbound | 10259 | kube-scheduler | Self | 
-| TCP | Inbound | 10257 | kube-controller-manager | Self | 
-
-
-
-
-### Worker node(s)
-
- | Protocol | Direction | Port Range | Purpose | Used By |
- | --- | --- | --- | --- | --- |
- | TCP | Inbound | 10250 | Kubelet API | Self, Control plane | 
- | TCP | Inbound | 30000-32767 | NodePort Services† | All | 
 
 
 ## Turn off swap
@@ -361,3 +264,102 @@ kubeadm token create --print-join-command
 
 ```
 
+# Locking down the system
+After Finishing other steps do the following on all nodes
+## Open Ports and turn off swap
+
+I recommend turning on the firewall with the following command and add all computers to the allowed list.
+
+```
+sudo ufw enable
+sudo ufw allow from 172.16.0.0
+
+```
+[Official Ubuntu ufw manual](https://manpages.ubuntu.com/manpages/jammy/en/man8/ufw.8.html)
+[Digital Ocean Tutorial on Firewall Setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-22-04)
+
+
+### Control plane
+
+| Protocol | Direction | Port Range | Purpose | Used By |
+| --- | --- | --- | --- | --- |
+| TCP | Inbound | 6443 | Kubernetes API server | All |
+| TCP | Inbound | 2379-2380 | etcd server client API | kube-apiserver, etcd |
+| TCP | Inbound | 10250 | Kubelet API | Self, Control plane | 
+| TCP | Inbound | 10259 | kube-scheduler | Self | 
+| TCP | Inbound | 10257 | kube-controller-manager | Self | 
+
+
+
+
+### Worker node(s)
+
+ | Protocol | Direction | Port Range | Purpose | Used By |
+ | --- | --- | --- | --- | --- |
+ | TCP | Inbound | 10250 | Kubelet API | Self, Control plane | 
+ | TCP | Inbound | 30000-32767 | NodePort Services† | All | 
+
+
+- Update Host file to contain IP Addresses for all machines in cluster and set each machines hostname.
+```
+sudo vi /etc/hosts
+```
+
+- Generate ssh-key to ssh in from host to login to each server without using password; I recommend naming the file something other than id_rsa
+
+Version One
+
+On the new node, open sshd_config and remove password access; uncomment and change answer to yes to add new key to node
+```
+sudo vi /etc/ssh/sshd_config
+
+PasswordAuthentication yes
+```
+Escape and then :wq to Quit and Save
+Reload ssh  
+```
+sudo service ssh reload-force
+```
+Also get the ip address via ifconfig on the new node.  You will  need to install it.
+
+On the Control Plane Node
+```
+# If you don't have one to use, generate a key, otherwise skip this step.
+ssh-keygen
+
+ssh-copy-id -i </path/to/public/key.pub> username@server-ip-address
+
+# cmd to login: ssh -i </path/to/private_key> <user>@<host-ip-address>
+```
+Open sshd_config and remove password access; uncomment and change answer to no
+```
+sudo vi /etc/ssh/sshd_config
+
+PasswordAuthentication no
+```
+Escape and then :wq to Quit and Save
+Reload ssh
+
+```
+sudo service ssh reload-force
+```
+Version 2
+```
+# Alternate way by logging into server and then copying the file to it.
+
+mkdir -p /home/user_name/.ssh && touch /home/user_name/.ssh/authorized_keys
+
+# Put pub key contents in authorized_keys
+vi /home/user_name/.ssh/authorized_keys
+
+# Create file to prevent having to answer "yes" to ssh question about host authorization
+cat <<EOF | sudo tee /home/<username>/.ssh/config
+StrictHostKeyChecking accept-new
+EOF
+
+# Update Permissions
+chmod 700 /home/user_name/.ssh && chmod 600 /home/user_name/.ssh/authorized_keys
+
+chown -R username:username /home/username/.ssh
+```
+- Copy private key to deployment server for k8s nodes as well if needed.
