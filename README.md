@@ -211,57 +211,48 @@ sudo apt-mark hold kubeadm kubelet kubectl
 FYI the service kubelet will keep erroring out until you either initialize the cluster and install the CNI or add it to the cluster.
 
 ## Install Containerd
-- Add containerd repository key and add the repository to source list
+Download most recent version
 ```
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable"
-
-
-sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-```
-- Install containerd
+wget https://github.com/containerd/containerd/releases/download/v1.6.8/containerd-1.6.8-linux-amd64.tar.gz
+tar Cxzvf /usr/local containerd-1.6.8-linux-amd64.tar.gz
 ```
 
-sudo apt update
-sudo apt install -y containerd.io
-
+Get most recent  version of runc
+```
+wget https://github.com/opencontainers/runc/releases/download/v1.1.3/runc.amd64
+sudo install -m 755 runc.amd64 /usr/local/sbin/runc
 ```
 
-- Configure containerd / CP-W
+Get CNI-Plugins most recent version extract and place
+```
+wget https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz
 
-Create a directory to store containerd config file in /etc/
-```
-sudo mkdir -p /etc/containerd
-```
-Generate the default config toml file
-```
-sudo containerd config default|sudo tee /etc/containerd/config.toml
+mkdir -p /opt/cni/bin
+tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.1.1.tgz
 ```
 
-Open the generated file in any text editor and verify whether the following settings are present. If not, you should set them as shown below
+Create containerd dir and deploy
 ```
-disabled_plugins = []
+sudo mkdir -p /etc/containerd/
+containerd config default | sudo tee /etc/containerd/config.toml
+```
 
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-  runtime_type = "io.containerd.runc.v2"  # <- note this, this line might have been missed
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-  SystemdCgroup = true # <- note this, this could be set as false in the default configuration, please make it true
+Enable default SystemdCgroup
+```
+sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+```
 
+Download and place containerd service
 ```
-Restart services
-```
-sudo systemctl restart containerd
+sudo curl -L https://raw.githubusercontent.com/containerd/containerd/main/containerd.service -o /etc/systemd/system/containerd.service
+
+sudo systemctl daemon-reload
+
+sudo systemctl start containerd
 sudo systemctl enable containerd
-systemctl status containerd
 ```
 
-- Setup crictl for inspecting containers / CP-W
+- Setup crictl for inspecting containers 
 
 First run the below command and check the output
 ```
@@ -302,11 +293,11 @@ sudo systemctl enable kubelet
 Start Up Control Plane
 
 ```
-sudo critcl images
+sudo crictl images
 
 sudo kubeadm config images pull --cri-socket unix:///var/run/containerd/containerd.sock
 
-sudo critcl images
+sudo crictl images
 
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --cri-socket unix:///var/run/containerd/containerd.sock --v=5
 
