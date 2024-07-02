@@ -277,12 +277,18 @@ sudo chmod -R 755 /mnt/data
 After Finishing other steps do the following on all nodes
 ## Open Ports and turn off swap
 
+Get the Cilium Octet and add to firewall allow list; the value is under cluster-pool-ipv4-cidr
+```
+kubectl -n kube-system get configmap cilium-config -o yaml
+
+kubectl get nodes
+```
+
 I recommend turning on the firewall with the following command and add all computers to the allowed list.
 
 ```
+sudo ufw allow from <cluster-pool-ipv4-cidr>
 sudo ufw enable
-sudo ufw allow from 172.16.0.0
-
 ```
 [Official Ubuntu ufw manual](https://manpages.ubuntu.com/manpages/jammy/en/man8/ufw.8.html)
 [Digital Ocean Tutorial on Firewall Setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-22-04)
