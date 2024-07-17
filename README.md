@@ -333,7 +333,7 @@ PasswordAuthentication yes
 Escape and then :wq to Quit and Save
 Reload ssh  
 ```
-sudo service ssh reload-force
+sudo service ssh force-reload
 ```
 Also get the ip address via ifconfig on the new node.  You will  need to install it.
 
