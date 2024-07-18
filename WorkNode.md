@@ -4,19 +4,16 @@
 
 1. Create a service unit file for your script. For example, create a file called myscript.service in the /etc/systemd/system/ directory:
 ```
-sudo nano /etc/systemd/system/k8sstartup.service
+sudo nano /etc/rc.local
 ```
 
 2. Add the following content to the file:
 ```
-[Unit]
-Description=My Script
-After=network.target
-[Service]
-ExecStart=/etc/init.d/k8sstartup
-[Install]
-WantedBy=default.target
+#!/bin/bash
+/etc/init.d/k8sstartup
+exit 0
 ```
+Escape :wq, then chmod +x rc.local, chown root:root rc.local
 
 3. Create file in etc/init.d/k8sstartup
 ```
@@ -25,17 +22,7 @@ sudo vi /etc/init.d/k8sstartup
 Add Contents Below
 ```
 #!/bin/bash
-### BEGIN INIT INFO
-# Provides:          k8sstartup
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: k8sstartup
-# Description:       Execute my  script at startup
-### END INIT INFO
-# Change to the directory where your  script is located
-cd /path/to/your/script_directory
-# Execute your script
-token join cmd
+sudo kubeadm join <controller-node-ip> --token <token> --discovery-token-ca-cert-hash <hash_256>
 ```
 
 4. Reload the systemd daemon to load the new service unit file:
@@ -58,22 +45,21 @@ sudo systemctl start k8sstartup.service
 
 sudo nano /etc/systemd/system/k8sshutdown.service
 2. Add the following content to the file:
-
+```
 [Unit]
 Description=Run mycommand at shutdown
-Requires=network.target
 DefaultDependencies=no
-Before=shutdown.target reboot.target
+Before=shutdown.target
 
 [Service]
 Type=oneshot
-RemainAfterExit=true
-ExecStart=/bin/true
-ExecStop=/etc/init.d/k8sshutdown
+ExecStart=/etc/init.d/k8sshutdown
 
 [Install]
-WantedBy=multi-user.target
-
+WantedBy=halt.target reboot.target shutdown.target
+Alias=k8sstartup.service
+```
+Escape :wq, chmod g-w k8sshutdown, chown root:root k8sshutdown
 
 3.Replace /etc/init.d/k8sshutdown and Save the file and exit the text editor.
 ```
