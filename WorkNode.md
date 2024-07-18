@@ -26,12 +26,10 @@ Add Contents Below
 ```
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          myscript
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
+# Provides:          k8sstartup
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: My  Script
+# Short-Description: k8sstartup
 # Description:       Execute my  script at startup
 ### END INIT INFO
 # Change to the directory where your  script is located
@@ -81,15 +79,16 @@ WantedBy=multi-user.target
 ```
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          haltusbpower
+# Provides:          k8sshutdown
 # Required-Start:    $all
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:
-# Short-Description: Halts USB power...
+# Short-Description: Stop k8s
 ### END INIT INFO
 
-sudo kubeadm reset -y
+sudo kubeadm reset || exit 1
+exit 0
 
 ```
 
@@ -105,3 +104,26 @@ sudo systemctl enable k8sshutdown.service
 ```
 sudo systemctl start k8sshutdown.service
 ```
+
+## Set up MacOs with Virtual Box
+
+Download correct version of Virtual Box for version of MacOS
+
+https://www.virtualbox.org/
+
+After Installing Virtual Box and Ubuntu
+- Open up the Applications
+- Open User and Groups
+- For the desired user, Click Login Items
+- Click on the + at the bottom, and select Application -> Other -> Automator.
+
+In Automator
+- Select Run a Shell Script.
+- Shell: /bin/zsh
+- Pass input: to stdin
+- Add the following
+```
+pmset dispalysleepnow
+/usr/local/bin/VBoxManage startvm <vmname>
+```
+- Save file as SaveVM
