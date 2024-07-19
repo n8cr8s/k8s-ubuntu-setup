@@ -4,13 +4,13 @@
 
 1. Create a service unit file for your script. For example, create a file called myscript.service in the /etc/systemd/system/ directory:
 ```
-sudo vi /etc/systemd/system/k8sstartup
+sudo vi /etc/systemd/system/k8sstartup.service
 ```
 
 2. Add the following content to the file:
 ```
 [Unit]
-Description=Run mycommand at shutdown
+Description=Run mycommand at startup
 DefaultDependencies=no
 After=network.target
 
@@ -22,7 +22,7 @@ Restart=always
 WantedBy=multi-user.target
 Alias=k8sstartup.service
 ```
-Escape :wq, then chmod +x rc.local, chown root:root rc.local
+Escape :wq, then chmod +x /etc/init.d/k8sstartup.service
 
 3. Create file in etc/init.d/k8sstartup
 ```
@@ -31,9 +31,21 @@ sudo vi /etc/init.d/k8sstartup
 Add Contents Below
 ```
 #!/bin/bash
+### BEGIN INIT INFO
+# Provides:          k8sstartup
+# Required-Start:    $all
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: Start k8s
+### END INIT INFO
 sudo kubeadm join <controller-node-ip> --token <token> --discovery-token-ca-cert-hash <hash_256>
 ```
-Escape :wq, chmod +x k8sstartup, chown root:root k8sstartup
+Escape :wq, 
+```
+chmod +x k8sstartup
+chown root:root k8sstartup
+```
 
 4. Reload the systemd daemon to load the new service unit file:
 ```
@@ -51,8 +63,9 @@ sudo systemctl start k8sshutdown.service
 ## Shutdown K8s Service
 
 1. Create a service unit file for your script. For example, create a file called k8sshutdown.service in the /etc/systemd/system/ directory:
-
+```
 sudo nano /etc/systemd/system/k8sshutdown.service
+```
 2. Add the following content to the file:
 ```
 [Unit]
@@ -68,8 +81,11 @@ ExecStart=/etc/init.d/k8sshutdown
 WantedBy=halt.target reboot.target shutdown.target
 Alias=k8sshutdown.service
 ```
-Escape :wq, chmod g-w k8sshutdown, chown root:root k8sshutdown
-
+Escape :wq
+```
+chmod +x /etc/init.d/k8sshutdown.service
+chown root:root /etc/init.d/k8sshutdown.service
+```
 3.Replace /etc/init.d/k8sshutdown and Save the file and exit the text editor.
 ```
 #!/bin/bash
@@ -82,7 +98,7 @@ Escape :wq, chmod g-w k8sshutdown, chown root:root k8sshutdown
 # Short-Description: Stop k8s
 ### END INIT INFO
 
-sudo kubeadm reset || exit 1
+sudo kubeadm reset --force || exit 1
 exit 0
 
 ```
