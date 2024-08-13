@@ -341,4 +341,7 @@ Update Firewall with IP for Cilium Cluster
 kubeadm token create --print-join-command
 
 ```
-
+## Label workers
+```
+kubectl label node <node-name> node-role.kubernetes.io/worker=worker
+```
