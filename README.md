@@ -356,7 +356,7 @@ Escape and then :wq to Quit and Save
 Reload ssh
 
 ```
-sudo service ssh reload-force
+sudo service ssh force-reload
 ```
 Version 2
 ```
