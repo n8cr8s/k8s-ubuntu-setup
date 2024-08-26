@@ -2,10 +2,6 @@
 
 ## Control Plane Primary Node
 
-### RHEL/CentOs
-```
-yum install -y kubeadm-1.xx.x-0 --disableexcludes=kubernetes
-```
 ### Ubuntu/Debian
 ```
 sudo apt update
@@ -31,7 +27,18 @@ sudo kubeadm upgrade apply v1.xx.x
 - Additional Control Plane nodes can be updated one at a time after the primary node is updated.
 - Worker nodes can be done in parallel with each other.
 
-From the node
+Install new version
+
+### Ubuntu/Debian
+```
+sudo apt-mark unhold kubelet kubectl kubeadm
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubeadm kubelet kubectl
+```
+
+
+From the node (Only additional Control Plane nodes)
 ```
 sudo kubeadm upgrade node
 ```
@@ -39,20 +46,6 @@ sudo kubeadm upgrade node
 From primary control plane
 ```
 kubectl drain <node> --ignore-daemonset
-```
-
-### RHEL/CentOs
-```
-yum install -y kubelet-1.xx.x-0 kubectl-1.xx.x-0  --disableexcludes=kubernetes
-```
-
-### Ubuntu/Debian
-```
-# Replace xx.x with version, example, 1.22.0-00
-apt-mark unhold kubelet kubectl && \
-apt-get update && apt-get install -y \
-kubelet=1.xx.x-00 kubectl=1.xx.x-00 && \
-apt-mark hold kubelet kubectl
 ```
 
 ### System Daemon Reload and Restart Kubelet
