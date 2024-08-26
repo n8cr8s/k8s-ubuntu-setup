@@ -378,3 +378,8 @@ chmod 700 /home/user_name/.ssh && chmod 600 /home/user_name/.ssh/authorized_keys
 chown -R username:username /home/username/.ssh
 ```
 - Copy private key to deployment server for k8s nodes as well if needed.
+
+## Label workers
+```
+kubectl label node <node-name> node-role.kubernetes.io/worker=worker
+```

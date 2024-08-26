@@ -8,11 +8,9 @@ yum install -y kubeadm-1.xx.x-0 --disableexcludes=kubernetes
 ```
 ### Ubuntu/Debian
 ```
-# Replace xx.x with version, example, 1.22.0-00
-apt-mark unhold kubeadm && \
-apt-get update && apt-get install -y \
-kubeadm=1.xx.x-00 && \
-apt-mark hold kubeadm
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubeadm kubelet kubectl
 ```
 
 ### Validate Version and Test Upgrade
