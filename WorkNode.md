@@ -51,11 +51,8 @@ chown root:root k8sstartup
 ```
 sudo systemctl daemon-reload
 ```
-5. Enable the service to start at boot:
-```
-sudo systemctl enable k8sshutdown.service
-```
-6. Start the service:
+
+5. Start the service:
 ```
 sudo systemctl start k8sshutdown.service
 ```
@@ -64,7 +61,7 @@ sudo systemctl start k8sshutdown.service
 
 1. Create a service unit file for your script. For example, create a file called k8sshutdown.service in the /etc/systemd/system/ directory:
 ```
-sudo nano /etc/systemd/system/k8sshutdown.service
+sudo vi /etc/systemd/system/k8sshutdown.service
 ```
 2. Add the following content to the file:
 ```
@@ -83,8 +80,8 @@ Alias=k8sshutdown.service
 ```
 Escape :wq
 ```
-chmod +x /etc/init.d/k8sshutdown.service
-chown root:root /etc/init.d/k8sshutdown.service
+chmod +x /etc/systemd/system/k8sshutdown.service
+chown root:root /etc/systemd/system/k8sshutdown.service
 ```
 3.Replace /etc/init.d/k8sshutdown and Save the file and exit the text editor.
 ```
@@ -102,9 +99,12 @@ sudo kubeadm reset --force || exit 1
 exit 0
 
 ```
-
-4. Reload the systemd daemon to load the new service unit file:
+Escape :wq
+4. Change permission and ownership and reload the systemd daemon to load the new service unit file:
 ```
+chmod +x /etc/init.d/k8sshutdown
+chown root:root /etc/init.d/k8sshutdown
+
 sudo systemctl daemon-reload
 ```
 5. Enable the service to start at boot:
