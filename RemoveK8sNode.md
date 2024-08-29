@@ -5,7 +5,7 @@
 kubectl cordon <node_name>
 
 # Drain pods from node
-kubectl drain <node_name> --ignore-daemonsets
+kubectl drain <node_name> --ignore-daemonsets  --delete-emptydir-data
 
 # Remove from cluster
 kubectl delete node <node_name>
