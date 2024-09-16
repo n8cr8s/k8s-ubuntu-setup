@@ -12,7 +12,7 @@ sudo vi /etc/systemd/system/k8sstartup.service
 [Unit]
 Description=Run mycommand at startup
 DefaultDependencies=no
-After=network.target
+After=multi-user.target
 
 [Service]
 ExecStart=/etc/init.d/k8sstartup
@@ -39,7 +39,10 @@ Add Contents Below
 # Default-Stop:
 # Short-Description: Start k8s
 ### END INIT INFO
-sudo kubeadm join <controller-node-ip> --token <token> --discovery-token-ca-cert-hash <hash_256>
+sleep 30
+export k8scmd=$(cat /misc/k8snodes/$(ls /misc/k8snodes/ -Art))
+sudo $k8scmd
+
 ```
 Escape :wq, 
 ```
@@ -54,7 +57,7 @@ sudo systemctl daemon-reload
 
 5. Start the service:
 ```
-sudo systemctl start k8sshutdown.service
+sudo systemctl start k8sstartup.service
 ```
 
 ## Shutdown K8s Service
