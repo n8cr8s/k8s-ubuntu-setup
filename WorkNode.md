@@ -16,7 +16,7 @@ After=multi-user.target
 
 [Service]
 ExecStart=/etc/init.d/k8sstartup
-Restart=always
+Type=oneshot
 
 [Install]
 WantedBy=multi-user.target
