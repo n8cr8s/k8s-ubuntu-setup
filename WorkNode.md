@@ -40,7 +40,7 @@ Add Contents Below
 # Short-Description: Start k8s
 ### END INIT INFO
 sleep 30
-export k8scmd=$(cat /misc/k8snodes/$(ls /misc/k8snodes/ -Art))
+export k8scmd=$(cat /misc/k8snodes/$(ls /misc/k8snodes/ -Art | tail -n 1))
 sudo $k8scmd
 
 ```
