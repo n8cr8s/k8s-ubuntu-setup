@@ -4,7 +4,7 @@
 
 1. Create a service unit file for your script. For example, create a file called myscript.service in the /etc/systemd/system/ directory:
 ```
-sudo vi /etc/systemd/system/k8sstartup.service
+sudo vi /lib/systemd/system/k8sstartup.service
 ```
 
 2. Add the following content to the file:
@@ -22,7 +22,7 @@ Type=oneshot
 WantedBy=multi-user.target
 Alias=k8sstartup.service
 ```
-Escape :wq, then chmod +x /etc/init.d/k8sstartup.service
+Escape :wq, then chmod+x /lib/systemd/system/k8sstartup.service
 
 3. Create file in etc/init.d/k8sstartup
 ```
@@ -57,14 +57,14 @@ sudo systemctl daemon-reload
 
 5. Start the service:
 ```
-sudo systemctl start k8sstartup.service
+sudo systemctl enable k8sstartup.service
 ```
 
 ## Shutdown K8s Service
 
-1. Create a service unit file for your script. For example, create a file called k8sshutdown.service in the /etc/systemd/system/ directory:
+1. Create a service unit file for your script. For example, create a file called k8sshutdown.service in the /lib/systemd/system/ directory:
 ```
-sudo vi /etc/systemd/system/k8sshutdown.service
+sudo vi /lib/systemd/system/k8sshutdown.service
 ```
 2. Add the following content to the file:
 ```
@@ -83,8 +83,8 @@ Alias=k8sshutdown.service
 ```
 Escape :wq
 ```
-chmod +x /etc/systemd/system/k8sshutdown.service
-chown root:root /etc/systemd/system/k8sshutdown.service
+chmod +x /lib/systemd/system/k8sshutdown.service
+chown root:root /lib/systemd/system/k8sshutdown.service
 ```
 3.Replace /etc/init.d/k8sshutdown and Save the file and exit the text editor.
 ```
@@ -137,7 +137,7 @@ In Automator
 - Pass input: to stdin
 - Add the following
 ```
-pmset dispalysleepnow
+pmset displaysleepnow
 /usr/local/bin/VBoxManage startvm <vmname>
 ```
 - Save file as SaveVM
