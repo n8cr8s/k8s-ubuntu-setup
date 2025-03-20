@@ -1,4 +1,5 @@
-# Worker Node Services
+# Control Panel Node
+
 
 ## Startup K8s Service
 
@@ -16,13 +17,13 @@ After=multi-user.target
 
 [Service]
 ExecStart=/etc/init.d/k8sstartup
-Type=oneshot
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
 Alias=k8sstartup.service
 ```
-Escape :wq, then chmod+x /lib/systemd/system/k8sstartup.service
+Escape :wq, then chmod +x /lib/systemd/system/k8sstartup.service
 
 3. Create file in etc/init.d/k8sstartup
 ```
@@ -40,8 +41,7 @@ Add Contents Below
 # Short-Description: Start k8s
 ### END INIT INFO
 sleep 30
-export k8scmd=$(cat /misc/k8snodes/$(ls /misc/k8snodes/ -Art | tail -n 1))
-sudo $k8scmd
+kubeadm token create --print-join-command --ttl 6h >  /misc/k8snodes/k8snodes/k8s_token_"$(date +'%Y_%m_%d_%I_%M_%p')".txt
 
 ```
 Escape :wq, 
