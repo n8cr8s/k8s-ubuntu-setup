@@ -16,8 +16,9 @@ DefaultDependencies=no
 After=multi-user.target
 
 [Service]
+Type=oneshot
 ExecStart=/etc/init.d/k8sstartup
-Restart=always
+User=nsmith
 
 [Install]
 WantedBy=multi-user.target
