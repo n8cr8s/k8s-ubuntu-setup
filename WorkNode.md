@@ -23,6 +23,10 @@ WantedBy=multi-user.target
 Alias=k8sstartup.service
 ```
 Escape :wq, then chmod+x /lib/systemd/system/k8sstartup.service
+```
+sudo chown root:root /lib/systemd/system/k8sstartup.service
+sudo chmod +x /lib/systemd/system/k8sstartup.service
+```
 
 3. Create file in etc/init.d/k8sstartup
 ```
@@ -87,6 +91,9 @@ sudo chmod +x /lib/systemd/system/k8sshutdown.service
 sudo chown root:root /lib/systemd/system/k8sshutdown.service
 ```
 3.Replace /etc/init.d/k8sshutdown and Save the file and exit the text editor.
+```
+sudo vi /etc/init.d/k8sshutdown
+```
 ```
 #!/bin/bash
 ### BEGIN INIT INFO
