@@ -1,19 +1,28 @@
-# K8s on Ubuntu 22.04
+# K8s on Ubuntu 24.04
 
 Stack Setup:
-- Ubuntu 22.04 Server
+- Ubuntu 24.04 Server
 - Kubeadm for K8s setup
 - Cilium for CNI
 - Containerd for Container Runtime
 
-## Steps to set up Ubuntu Server 22.04
+## Steps to set up Ubuntu Server 24.04
 
-- Get ISO for Ubuntu Server 22.04 or Desktop 
+- Get ISO for Ubuntu Server 24.04 or Desktop 
 - If you get the desktop you will need to run the following command:
 ```
 sudo apt install ubuntu-server -y
 
 sudo apt install openssh-server -y
+```
+
+Install crictl
+
+```
+VERSION="v1.34.0"
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
+sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
+rm -f crictl-$VERSION-linux-amd64.tar.gz
 ```
 
 Update the sudoers file in Workers Only; create a new file for permissions don't edit the original.
@@ -28,6 +37,8 @@ Add the following line to allow access to add to cluster via kubeadm without a p
 
 Ctrl+X to exit, Y for save; validate format
 ```
+sudo chmod 0440 /etc/sudoers.d/<username>
+
 sudo visudo -c
 ```
 
@@ -59,7 +70,7 @@ sudo vi /etc/fstab
 ```
 
 - Update the line referring to swap by commenting it out with a pound sign.  It is usually the last line.
-- Press th Esc key
+- Press the Esc key
 
 ```
 :wq
@@ -101,8 +112,8 @@ sudo apt-get update
 Get K8s Libraries
 
 ```
-# Update to your version of k8s, this is set to 1.30
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# Update to your version of k8s, this is set to 1.34
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
@@ -116,22 +127,22 @@ FYI the service kubelet will keep erroring out until you either initialize the c
 ## Install Containerd
 Download most recent version
 ```
-wget https://github.com/containerd/containerd/releases/download/v1.6.8/containerd-1.6.8-linux-amd64.tar.gz
-sudo tar Cxzvf /usr/local containerd-1.6.8-linux-amd64.tar.gz
+wget https://github.com/containerd/containerd/releases/download/v2.1.8/containerd-2.1.8-linux-amd64.tar.gz
+sudo tar Cxzvf /usr/local containerd-2.1.8-linux-amd64.tar.gz
 ```
 
 Get most recent  version of runc
 ```
-wget https://github.com/opencontainers/runc/releases/download/v1.1.3/runc.amd64
+wget https://github.com/opencontainers/runc/releases/download/v1.3.3/runc.amd64
 sudo install -m 755 runc.amd64 /usr/local/sbin/runc
 ```
 
 Get CNI-Plugins most recent version extract and place
 ```
-wget https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz
+wget https://github.com/containernetworking/plugins/releases/download/v1.6.2/cni-plugins-linux-amd64-v1.6.2.tgz
 
 mkdir -p /opt/cni/bin
-sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.1.1.tgz
+sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.6.2.tgz
 ```
 
 Create containerd dir and deploy
