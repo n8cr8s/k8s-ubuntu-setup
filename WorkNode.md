@@ -46,8 +46,8 @@ sudo $k8scmd
 ```
 Escape :wq, 
 ```
-chmod +x k8sstartup
-chown root:root k8sstartup
+sudo chmod +x /etc/init.d/k8sstartup
+sudo chown root:root /etc/init.d/k8sstartup
 ```
 
 4. Reload the systemd daemon to load the new service unit file:
@@ -83,8 +83,8 @@ Alias=k8sshutdown.service
 ```
 Escape :wq
 ```
-chmod +x /lib/systemd/system/k8sshutdown.service
-chown root:root /lib/systemd/system/k8sshutdown.service
+sudo chmod +x /lib/systemd/system/k8sshutdown.service
+sudo chown root:root /lib/systemd/system/k8sshutdown.service
 ```
 3.Replace /etc/init.d/k8sshutdown and Save the file and exit the text editor.
 ```
@@ -105,8 +105,8 @@ exit 0
 Escape :wq
 4. Change permission and ownership and reload the systemd daemon to load the new service unit file:
 ```
-chmod +x /etc/init.d/k8sshutdown
-chown root:root /etc/init.d/k8sshutdown
+sudo chmod +x /etc/init.d/k8sshutdown
+sudo chown root:root /etc/init.d/k8sshutdown
 
 sudo systemctl daemon-reload
 ```
